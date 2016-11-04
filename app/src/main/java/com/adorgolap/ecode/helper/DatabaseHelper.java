@@ -153,23 +153,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return null;
     }
-    public ArrayList<String> getEcodes(){
-        ArrayList<String> eCodes = new ArrayList<String>();
-        String query = "Select code from E_CODE_INFO where code like \'E%\'";
+    public ArrayList<ECodeData> getEcodes(){
+        ArrayList<ECodeData> eCodes = new ArrayList<ECodeData>();
+        String query = "Select code,name from E_CODE_INFO where code like \'E%\'";
+        String tempCode,tempName;
         Cursor c = myDataBase.rawQuery(query,null);
         if(c.moveToFirst())
         {
             do {
-                eCodes.add(c.getString(c.getColumnIndex("code")));
-            }while (c.moveToNext());
-//            return eCodes;
-        }
-        query = "Select code from E_CODE_INFO where code not like \'E%\'";
-        c = myDataBase.rawQuery(query,null);
-        if(c.moveToFirst())
-        {
-            do {
-                eCodes.add(c.getString(c.getColumnIndex("code")));
+                tempCode = c.getString(c.getColumnIndex("code"));
+                tempName = c.getString(c.getColumnIndex("name"));
+                eCodes.add(new ECodeData(tempCode,tempName,null,null));
             }while (c.moveToNext());
             return eCodes;
         }

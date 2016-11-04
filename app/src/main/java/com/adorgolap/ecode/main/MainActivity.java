@@ -1,33 +1,53 @@
 package com.adorgolap.ecode.main;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.adorgolap.ecode.R;
+import com.adorgolap.ecode.adapter.ListViewAdapter;
 import com.adorgolap.ecode.helper.DatabaseHelper;
+import com.adorgolap.ecode.helper.ECodeData;
+import com.adorgolap.ecode.helper.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+import static com.adorgolap.ecode.helper.Utils.SCREEN_HEIGHT;
+import static com.adorgolap.ecode.helper.Utils.SCREEN_WIDTH;
 
 public class MainActivity extends AppCompatActivity {
+    LinearLayout ll;
     Context context;
     ListView lv;
     EditText etEcode;
-    ArrayAdapter<String> adapter;
+    ListViewAdapter adapter;
+    ArrayList<ECodeData> eCodesAndNamesForFilteringLowerCaseCopy;
+    ArrayList<ECodeData> eCodesAndNamesForFilteringIntactCopy;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         context = this;
+        if (Build.VERSION.SDK_INT >= 16) {
+            setBackground();
+        }
         populateList();
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -47,16 +70,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void populateList() {
-//        DatabaseHelper databaseHelper = new DatabaseHelper(context);
-//        try {
-//            databaseHelper.createDataBase();
-//            databaseHelper.openDataBase();
-//            ArrayList<String> eCodes = databaseHelper.getEcodes();
-//            Toast.makeText(context,"Size = "+eCodes.size(),Toast.LENGTH_LONG).show();
-//            databaseHelper.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
         PopulateListTask task = new PopulateListTask();
         task.execute();
         etEcode.addTextChangedListener(new TextWatcher() {
@@ -67,8 +80,16 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(adapter != null) {
-                    MainActivity.this.adapter.getFilter().filter(charSequence);
+                if (adapter != null && charSequence.length() >= 2) {
+                    ArrayList<ECodeData> filteredAdapterData =
+                            Utils.filterData(eCodesAndNamesForFilteringIntactCopy,
+                                    eCodesAndNamesForFilteringLowerCaseCopy,
+                                    charSequence.toString().toLowerCase());
+                    adapter = new ListViewAdapter(context, filteredAdapterData);
+                    lv.setAdapter(adapter);
+                } else {
+                    adapter = new ListViewAdapter(context, eCodesAndNamesForFilteringIntactCopy);
+                    lv.setAdapter(adapter);
                 }
             }
 
@@ -77,23 +98,18 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                TextView tv = (TextView) view;
-                Intent i = new Intent(MainActivity.this,DetailsActivity.class);
-                i.putExtra("code",tv.getText());
+                TextView tv = (TextView) view.findViewById(R.id.tvCodeListItem);
+                Intent i = new Intent(MainActivity.this, DetailsActivity.class);
+                i.putExtra("code", tv.getText());
                 startActivity(i);
             }
         });
 
     }
 
-    private void initialize() {
-        lv = (ListView) findViewById(R.id.listView);
-        etEcode = (EditText) findViewById(R.id.etEcode);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -110,15 +126,35 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_about:
+                Intent i = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(i);
+                break;
+            case R.id.action_rate:
+                Uri uri = Uri.parse("market://details?id=" + context.getPackageName());
+                Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+                // To count with Play market backstack, After pressing back button,
+                // to taken back to our application, we need to add following flags to intent.
+                goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                        Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                try {
+                    startActivity(goToMarket);
+                } catch (ActivityNotFoundException e) {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://play.google.com/store/apps/details?id=" + context.getPackageName())));
+                }
+                break;
+            case R.id.actionAmjadKhan:
+                Intent j = new Intent(MainActivity.this, AmzadKhanList.class);
+                startActivity(j);
+                break;
         }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
-    private class PopulateListTask extends AsyncTask<Void, Void, ArrayList<String>>
-    {
+    private class PopulateListTask extends AsyncTask<Void, Void, ArrayList<ECodeData>> {
         @Override
         protected void onPreExecute() {
             lv = (ListView) findViewById(R.id.listView);
@@ -127,25 +163,88 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected ArrayList<String> doInBackground(Void... voids) {
+        protected ArrayList<ECodeData> doInBackground(Void... voids) {
             DatabaseHelper databaseHelper = new DatabaseHelper(context);
-            ArrayList<String> eCodes = new ArrayList<String>();
+            ArrayList<ECodeData> eCodesAndName = new ArrayList<ECodeData>();
             try {
-            databaseHelper.createDataBase();
-            databaseHelper.openDataBase();
-            eCodes = databaseHelper.getEcodes();
-            databaseHelper.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-            return eCodes;
+                databaseHelper.createDataBase();
+                databaseHelper.openDataBase();
+                eCodesAndName = databaseHelper.getEcodes();
+                databaseHelper.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Collections.sort(eCodesAndName, new Comparator<ECodeData>() {
+                @Override
+                public int compare(ECodeData eCodeData, ECodeData t1) {
+                    return eCodeData.code.compareTo(t1.code);
+                }
+            });
+            return eCodesAndName;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<String> eCodes) {
-            adapter = new ArrayAdapter<String>(context,android.R.layout.simple_expandable_list_item_1, eCodes);
+        protected void onPostExecute(ArrayList<ECodeData> eCodesAndName) {
+            eCodesAndNamesForFilteringIntactCopy = eCodesAndName;
+            eCodesAndNamesForFilteringLowerCaseCopy = saveDataForFiltering(eCodesAndName);//save a copy for LCS filtering
+            adapter = new ListViewAdapter(context, eCodesAndName);
             lv.setAdapter(adapter);
-            adapter.getFilter().filter(etEcode.getText());
+        }
+    }
+
+    private ArrayList<ECodeData> saveDataForFiltering(ArrayList<ECodeData> eCodesAndName) {
+        ArrayList<ECodeData> temp = new ArrayList<ECodeData>();
+        for (ECodeData eCodeData : eCodesAndName) {
+            temp.add(new ECodeData(eCodeData.name.toLowerCase(), eCodeData.code.toLowerCase()));
+        }
+        return temp;
+    }
+
+    class BackGroundSetterTask extends AsyncTask<Integer, Void, Bitmap> {
+        @Override
+        protected Bitmap doInBackground(Integer... params) {
+            int drawableId = params[0];
+            return Utils.decodeSampledBitmapFromResource(getResources(),
+                    drawableId, SCREEN_WIDTH / 10, SCREEN_HEIGHT / 10);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            calculateScreenSize();
+            ll = (LinearLayout) findViewById(R.id.content_main);
+
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            BitmapDrawable background = new BitmapDrawable(context.getResources(), bitmap);
+            if (Build.VERSION.SDK_INT >= 16) {
+                ll.setBackground(background);
+            }
+        }
+    }
+
+    private void setBackground() {
+        BackGroundSetterTask blt = new BackGroundSetterTask();
+        blt.execute(R.drawable.bg_low);
+    }
+
+    private void calculateScreenSize() {
+        if(Utils.SCREEN_HEIGHT == 0 || Utils.SCREEN_WIDTH == 0) {
+            WindowManager wm = (WindowManager) context
+                    .getSystemService(Context.WINDOW_SERVICE);
+            Display d = wm.getDefaultDisplay();
+            Point s = new Point();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+                d.getSize(s);
+                Utils.SCREEN_WIDTH = s.x;
+                Utils.SCREEN_HEIGHT = s.y;
+
+            } else {
+                Utils.SCREEN_HEIGHT = d.getHeight();
+                Utils.SCREEN_WIDTH = d.getWidth();
+
+            }
         }
     }
 }

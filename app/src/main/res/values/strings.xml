@@ -1,4 +1,43 @@
 <resources>
-    <string name="app_name">Halal | Haram Food E codes</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">Halal or Haram Food E codes</string>
+    <string name="actionAbout">About</string>
+    <string name="actionAmajadKhan">Amjad Khan List</string>
+    <string name="actionRate">Rate Us</string>
+    <string name="about">
+        E-Numbers represent specific food additives,
+        used by the food industry in the manufacture of
+        various food products. These E-Numbers have been
+        formulated by the European Economic Community (EEC)
+        and are universally adopted by the food industry worldwide.\n\nIt is
+        known that many E-numbers contain
+        unlisted Haram ingredients in them.
+        Generally additives derived from animals and insects.\n\nPrior to
+        E-numbers were introduced, the name of food ingredients
+        were directly provided in the description. So it was easy to avoid
+        the foods that contains Haram ingredients like pork fat or suspicious
+        animal fat or alcohol. But now it is difficult to determine if a food is
+        Halal or Haram just observing the E-numbers.\n\nThis app
+        provides information about being Halal or Haram or  Mushbooh (Suspicious)
+        of a food based on E-numbers.\n\nMany Muslim
+        organizations are working on the issue to find out whether an ingredient is Halal or Haram.
+        The study so far has revealed Halal or Haram status of most of the
+        ingredients but few are still unknown.\n\nThe data
+        were collected from the following links:\n
+        https://special.worldofislam.info/Food/numbers.html\n\n
+        www.muslimconsumergroup.com/\n\n
+        http://www.muslimtents.com/aminahsworld/ecodes.html\n\nAs a
+        developer, I state that I’m not responsible or liable for any action based on this information.
+    </string>
+
+    <string name="amjadKhanTitle">
+        A list by Dr. Amjad Khan
+    </string>
+    <string name="amjadKhanListDescription">
+        An article called \"Are we eating pork?\" has spread in the Internet
+        demanding that it is written by Dr. Amjad Khan[ Medical Research Institute, United States],
+        but I [the developer] have failed to find the actual
+        article but shared posts in many forums by others.\n
+        In the article a list of E-numbers has been published that
+        contain pork according to study. So the followings are Haram according to the article.\n
+    </string>
 </resources>
