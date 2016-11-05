@@ -1,6 +1,7 @@
 package com.adorgolap.ecode.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
@@ -8,8 +9,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.adorgolap.ecode.R;
 import com.adorgolap.ecode.adapter.ListViewAdapter;
@@ -50,10 +54,19 @@ public class AmzadKhanList extends AppCompatActivity {
         ArrayList<ECodeData> data = new ArrayList<ECodeData>();
         for(int i = 0 ; i < listItems.length ;i++)
         {
-            data.add(new ECodeData(listItems[i],"Status: Haram"));
+            data.add(new ECodeData(listItems[i],"Status: Haram according to the article.\nAllah (swt) knows the best."));
         }
         adapter = new ListViewAdapter(context,data);
         lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
+                TextView tv = (TextView) view.findViewById(R.id.tvCodeListItem);
+                Intent i = new Intent(AmzadKhanList.this, DetailsActivity.class);
+                i.putExtra("code", tv.getText());
+                startActivity(i);
+            }
+        });
     }
 
     class BackGroundSetterTask extends AsyncTask<Integer, Void, Bitmap> {

@@ -19,6 +19,8 @@
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
+            android:textColor="#fff"
+            android:hint="Search"
             android:id="@+id/etEcode" />
 
         <ListView

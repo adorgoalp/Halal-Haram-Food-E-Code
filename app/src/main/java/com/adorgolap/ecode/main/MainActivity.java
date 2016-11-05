@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (adapter != null && charSequence.length() >= 2) {
+                if (adapter != null) {
                     ArrayList<ECodeData> filteredAdapterData =
                             Utils.filterData(eCodesAndNamesForFilteringIntactCopy,
                                     eCodesAndNamesForFilteringLowerCaseCopy,
@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
         protected Bitmap doInBackground(Integer... params) {
             int drawableId = params[0];
             return Utils.decodeSampledBitmapFromResource(getResources(),
-                    drawableId, SCREEN_WIDTH / 10, SCREEN_HEIGHT / 10);
+                    drawableId, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4);
         }
 
         @Override

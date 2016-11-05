@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:installLocation="preferExternal"
     package="com.adorgolap.ecode">
 
     <application
@@ -7,11 +8,15 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:isGame="false"
+        android:logo="@mipmap/ic_launcher"
+        android:allowClearUserData="false"
         android:theme="@style/AppTheme">
         <activity
             android:name="com.adorgolap.ecode.main.MainActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +26,8 @@
         </activity>
         <activity
             android:name="com.adorgolap.ecode.main.DetailsActivity"
-            android:label="@string/app_name"
+            android:label="Details"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="DETAILSACTIVITY" />
@@ -31,7 +37,8 @@
         </activity>
         <activity
             android:name="com.adorgolap.ecode.main.AmzadKhanList"
-            android:label="@string/app_name"
+            android:label="Dr. M Amzad Khan's List"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="AMHADKHANLIST" />
@@ -41,7 +48,8 @@
         </activity>
         <activity
             android:name="com.adorgolap.ecode.main.AboutActivity"
-            android:label="@string/app_name"
+            android:label="About"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="ABOUTACTIVITY" />

@@ -1,29 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:padding="16dp"
-    android:background="#cdaf95"
     android:id="@+id/llAmjadKhan"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#cdaf95"
+    android:orientation="vertical"
+    android:weightSum="10"
+    android:padding="16dp">
 
     <TextView
-        android:text="@string/amjadKhanTitle"
+        android:layout_weight="1"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:gravity="center"
-        android:textColor="#fff"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:layout_height="wrap_content"
-        />
+        android:text="@string/amjadKhanTitle"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:textColor="#fff" />
 
-    <TextView
-        android:text="@string/amjadKhanListDescription"
+    <ScrollView
+        android:layout_weight="3"
         android:layout_width="match_parent"
-        android:textColor="#fff"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/amjadKhanListDescription"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:textColor="#fff" />
+
+
+        </LinearLayout>
+    </ScrollView>
 
     <ListView
+        android:layout_weight="6"
         android:id="@+id/lvAmjadKhan"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp" />
+
 </LinearLayout>

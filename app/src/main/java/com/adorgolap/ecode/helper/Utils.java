@@ -55,27 +55,45 @@ public class Utils {
 		return BACK_GROUND;
 	}
 
-	public static ArrayList<ECodeData> filterData(ArrayList<ECodeData> originalCopy, ArrayList<ECodeData> lowerCaseData, String stringToMatch)
+	public static ArrayList<ECodeData> filterData(ArrayList<ECodeData> originalCopy,
+                                                  ArrayList<ECodeData> lowerCaseData,
+                                                  String stringToMatch)
 	{
         ArrayList<ECodeData> filteredData = new ArrayList<ECodeData>();
         ECodeData singelData;
-        if(stringToMatch.startsWith("e") || stringToMatch.startsWith("E"))
-        {
-            if(Character.isDigit(stringToMatch.charAt(1)))
-            {
-                stringToMatch = stringToMatch.substring(1);
-            }
-        }
+        ArrayList<Integer> highMatched = new ArrayList<Integer>();
+        ArrayList<Integer> mediumMatched = new ArrayList<Integer>();
+        ArrayList<Integer> lowMatched = new ArrayList<Integer>();
         for(int i = 0 ; i < lowerCaseData.size() ; i++)
         {
             singelData = lowerCaseData.get(i);
-            //scope of efficiency by modyfying the lib LCS. ie return the length directly
-            int lengthMatchedInCode = LCS.getLCS(singelData.code,stringToMatch).length();
-            int lengthMatchedInName = LCS.getLCS(singelData.name,stringToMatch).length();
-            if(lengthMatchedInCode == stringToMatch.length() || lengthMatchedInName == stringToMatch.length())
+            //scope of efficiency by modyfying the lib LCS. ie return the length directly[Done]
+            int lengthMatchedInCode = LCS.getLengthLCS(singelData.code,stringToMatch);
+            int lengthMatchedInName = LCS.getLengthLCS(singelData.name,stringToMatch);
+
+            int stringLength = stringToMatch.length();
+            if(lengthMatchedInCode == stringLength|| lengthMatchedInName == stringLength)
             {
-                filteredData.add(originalCopy.get(i));
+                highMatched.add(i);
+//                filteredData.add(originalCopy.get(i));
+            }else if(lengthMatchedInCode == stringLength-1 || lengthMatchedInName == stringLength-1)
+            {
+                if(!highMatched.contains(i)) {
+                    mediumMatched.add(i);
+                }
             }
+            else if(lengthMatchedInCode == stringLength-2 || lengthMatchedInName == stringLength-2)
+            {
+                if(!highMatched.contains(i) || !mediumMatched.contains(i)) {
+                    lowMatched.add(i);
+                }
+            }
+        }
+        highMatched.addAll(mediumMatched);
+        highMatched.addAll(lowMatched);
+        for(int i : highMatched)
+        {
+            filteredData.add(originalCopy.get(i));
         }
         return  filteredData;
 	}

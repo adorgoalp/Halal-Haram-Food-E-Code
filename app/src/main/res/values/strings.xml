@@ -34,10 +34,11 @@
     </string>
     <string name="amjadKhanListDescription">
         An article called \"Are we eating pork?\" has spread in the Internet
-        demanding that it is written by Dr. Amjad Khan[ Medical Research Institute, United States],
-        but I [the developer] have failed to find the actual
-        article but shared posts in many forums by others.\n
-        In the article a list of E-numbers has been published that
+        demanding that it is written by\nDr.
+        Amjad Khan\nMedical Research Institute\nUnited States.\n\nBut
+        I (the developer) have failed to find the actual
+        article but some of the shared posts about this article in several forums by others.\n\nIn
+        the article a list of E-numbers has been published that
         contain pork according to study. So the followings are Haram according to the article.\n
     </string>
 </resources>
